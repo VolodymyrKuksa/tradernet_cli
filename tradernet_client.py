@@ -1,24 +1,27 @@
 # ########################################################### #
 #           PublicApi-клиент TraderNet для Python 3           #
+#    https://tradernet.com/tradernet-api/public-api-client    #
 # ########################################################### #
+# edited to support PEP8 code style
 import time
 import hmac
 import hashlib
 import requests
-import json
+
+
+class TraderNetAPIError(Exception):
+    pass
 
 
 class PublicApiClient:
     V1 = 1
     V2 = 2
 
-    # Инициализация экземпляра класса
     def __init__(self, api_url, api_key, api_secret):
         self.api_url = api_url
         self.api_key = api_key
         self.api_secret = api_secret
 
-    # preSign используется для подписи с ключом
     def presign(self, d):
         s = ''
         for i in sorted(d):
@@ -40,7 +43,7 @@ class PublicApiClient:
                     s += f'{mode}[{i}]={d[i]}&'
         return s[:-1]
 
-    def send_request(self, method, params=None, version=V1):
+    def send_request(self, method, params=None, version=V2):
         req = dict()
         req['cmd'] = method
         if params:
@@ -54,10 +57,11 @@ class PublicApiClient:
         pre_sig = self.presign(req)
         presig_enc = self.http_encode(req)
 
-        # Создание подписи и выполнение запроса в зависимости от V1 или V2
         if version == self.V1:
-            req['sig'] = hmac.new(key=self.api_secret.encode(), digestmod=hashlib.sha256).hexdigest()
-            res = requests.post(self.api_url, data={'q': json.dumps(req)})
+            # V1 version does not work at the moment, it at least requires a proper auth procedure
+            raise NotImplemented
+            # req['sig'] = hmac.new(key=self.api_secret.encode(), digestmod=hashlib.sha256).hexdigest()
+            # res = requests.post(self.api_url, data={'q': json.dumps(req)})
         else:
             api_headers = {
                 'X-NtApi-Sig': hmac.new(
@@ -71,6 +75,11 @@ class PublicApiClient:
             res = requests.post(url, params=presig_enc, headers=api_headers, data=presig_enc)
 
         res.raise_for_status()
+
+        json_result = res.json()
+        if 'code' in json_result:
+            raise TraderNetAPIError(json_result)
+
         return res
 
     def __str__(self):

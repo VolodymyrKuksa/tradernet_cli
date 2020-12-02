@@ -1,8 +1,13 @@
 import argparse
+import copy
 import importlib
 import logging
+import traceback
+
+from __init__ import configure_logging
 
 from tradernet_client import PublicApiClient as TNClient
+from tradernet_client import TraderNetAPIError
 import commands
 
 
@@ -13,7 +18,6 @@ class ArgparseFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawText
     pass
 
 
-# ф-ція для зчитування аргументів програми
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description='http клієнт для TraderNet',
@@ -32,12 +36,26 @@ def parse_arguments():
     return parser.parse_args()
 
 
-# точка входу
+def log_execution_info(arguments):
+    args = copy.deepcopy(arguments)
+    del args.public_key
+    del args.secret
+    logger.info(f'Trying to execute command "{args.command}" with arguments {args}')
+
+
 if __name__ == '__main__':
+    configure_logging()
+
     arguments = parse_arguments()
     client = TNClient(arguments.api_url, arguments.public_key, arguments.secret)
     try:
+        log_execution_info(arguments)
         command = importlib.import_module(f'commands.{arguments.command}')
         command.execute(client, arguments)
     except ModuleNotFoundError:
         logger.error(f'Command "{arguments.command}" is not supported.')
+    except TraderNetAPIError as e:
+        logger.error(f'Call to TraderNet API resulted in an error: {e}\n{traceback.format_exc()}')
+    except Exception as e:
+        logger.error(f'Unexpected Exception: {e}\n{traceback.format_exc()}')
+        raise

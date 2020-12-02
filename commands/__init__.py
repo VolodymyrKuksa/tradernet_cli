@@ -8,7 +8,7 @@ import re
 
 logger = logging.getLogger(__name__)
 
-DESCRIPTION_RE = re.compile(r'\n.*@desc:\s*(.*)\n')
+DESCRIPTION_RE = re.compile(r'.*@desc:\s*(.*)\n')
 DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 Command = namedtuple('Command', ['name', 'description'])
 

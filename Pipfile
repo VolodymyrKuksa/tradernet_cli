@@ -7,7 +7,6 @@ verify_ssl = true
 
 [packages]
 requests = "*"
-tradernet-cli = {editable = true,path = "."}
 
 [requires]
 python_version = "3.8"

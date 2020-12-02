@@ -4,3 +4,4 @@ test
 scripts
 __pycache__
 *.egg-info
+*.log*

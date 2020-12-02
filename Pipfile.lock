@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "abd28d49329bcf3cf7d23991caa1c89e3e86f9a94804576e61d11d81dc08e7a7"
+            "sha256": "acbc8c4e7f2f98f1059b2a93d581ef43f4aa0c9741e64e6253adff8e35fbd99e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -44,10 +44,6 @@
             ],
             "index": "pypi",
             "version": "==2.25.0"
-        },
-        "tradernet-cli": {
-            "editable": true,
-            "path": "."
         },
         "urllib3": {
             "hashes": [

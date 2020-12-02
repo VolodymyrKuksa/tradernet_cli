@@ -1,7 +1,7 @@
 # tradernet_cli
 
 This is a simple python client for the [TraderNet](https://tradernet.com) API.
-Mainly this packaged is purposed to ease the automation of common tasks in TraderNet.
+Mainly this package is purposed to ease the automation of common tasks in TraderNet.
 
 ## Installation
 

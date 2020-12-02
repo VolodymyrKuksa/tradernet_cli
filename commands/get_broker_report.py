@@ -42,7 +42,7 @@ def add_arguments(parser):
                         help='Дата кінця звіту.')
 
     parser.add_argument('--get_broker_report_time_period', '-gbr_time_period',
-                        default=None,
+                        default='evening',
                         choices=TIME_PERIOD_NAME_TO_TIME.keys(),
                         type=str,
                         help='Часовий період ('
@@ -111,13 +111,15 @@ def execute(client, arguments):
     date_arguments = [
         arguments.get_broker_report_date_start,
         arguments.get_broker_report_date_end,
-        arguments.get_broker_report_time_period,
     ]
 
     if any(date_arguments):
         if not all(date_arguments):
-            logger.error('All date arguments must be given or none at all.')
+            missing_argument = 'get_broker_report_date_start' if not arguments.get_broker_report_date_start\
+                               else 'get_broker_report_date_end'
+            logger.error(f'Both date arguments must be given or none at all. Missing {missing_argument}.')
             return
+
         params['date_start'] = arguments.get_broker_report_date_start
         params['date_end'] = arguments.get_broker_report_date_end
         params['time_period'] = TIME_PERIOD_NAME_TO_TIME[arguments.get_broker_report_time_period]
@@ -125,7 +127,6 @@ def execute(client, arguments):
         params['recent'] = 1
 
     response = client.send_request(cmd, params=params, version=client.V2)
-    response.raise_for_status()
     data = GET_DATA_BY_FORMAT[file_format](response)
 
     filename = os.path.join(arguments.get_broker_report_output_directory, data.filename)
