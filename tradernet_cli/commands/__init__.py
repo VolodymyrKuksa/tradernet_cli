@@ -53,6 +53,6 @@ def add_arguments(parser):
                         help=f'Команда для виконання. Наявні команди:\n{commands_help}')
 
     for command in available_commands:
-        command_module = importlib.import_module(f'commands.{command.name}')
+        command_module = importlib.import_module(f'tradernet_cli.commands.{command.name}')
         if 'add_arguments' in command_module.__dict__.keys():
             command_module.add_arguments(parser)

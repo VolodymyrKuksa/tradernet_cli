@@ -4,12 +4,11 @@ import importlib
 import logging
 import traceback
 
-from __init__ import configure_logging
+from tradernet_cli import configure_logging
 
-from tradernet_client import PublicApiClient as TNClient
-from tradernet_client import TraderNetAPIError
-import commands
-
+from tradernet_cli.tradernet_client import PublicApiClient as TNClient
+from tradernet_cli.tradernet_client import TraderNetAPIError
+import tradernet_cli.commands as commands
 
 logger = logging.getLogger(__name__)
 

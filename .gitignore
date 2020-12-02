@@ -5,3 +5,7 @@ scripts
 __pycache__
 *.egg-info
 *.log*
+dist
+build
+deployment_scripts
+*.toml

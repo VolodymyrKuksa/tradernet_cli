@@ -8,7 +8,7 @@ import os
 import re
 import xml.dom.minidom as xml_minidom
 
-from commands import directory_path_type, date_type
+from tradernet_cli.commands import directory_path_type, date_type
 
 
 logger = logging.getLogger(__name__)

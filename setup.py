@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="tradernet_cli",
-    version="0.0.1",
+    version="1.0.0rc1",
     author="Volodymyr Kuksa",
     author_email="volodymyrkuksa@gmail.com",
     description="A small TraderNet API (https://tradernet.com/) client for automation purposes.",
@@ -18,5 +18,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=['requests'],
     python_requires='>=3.7',
 )
