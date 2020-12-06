@@ -76,9 +76,11 @@ class PublicApiClient:
 
         res.raise_for_status()
 
-        json_result = res.json()
-        if 'code' in json_result:
-            raise TraderNetAPIError(json_result)
+        # handle api error
+        if 'application/json' in res.headers['Content-Type']:
+            json_result = res.json()
+            if type(json_result) is dict and 'code' in json_result.keys():
+                raise TraderNetAPIError(json_result)
 
         return res
 
