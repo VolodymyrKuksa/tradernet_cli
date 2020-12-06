@@ -49,7 +49,7 @@ if __name__ == '__main__':
     client = TNClient(arguments.api_url, arguments.public_key, arguments.secret)
     try:
         log_execution_info(arguments)
-        command = importlib.import_module(f'commands.{arguments.command}')
+        command = importlib.import_module(f'tradernet_cli.commands.{arguments.command}')
         command.execute(client, arguments)
     except ModuleNotFoundError:
         logger.error(f'Command "{arguments.command}" is not supported.')
