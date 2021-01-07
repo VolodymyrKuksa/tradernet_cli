@@ -25,7 +25,7 @@ def parse_arguments():
 
     cyprus_api_url = 'https://tradernet.com/api'
     parser.add_argument('--api_url', '-au', default=cyprus_api_url, type=str,
-                        help=f'URL для TraderNet API (Кіпр - {cyprus_api_url}, Беліз - ???)')
+                        help=f'URL для TraderNet API.')
 
     parser.add_argument('--public_key', '-pk', required=True, type=str, help='Ваш публічний ключ TraderNet API')
     parser.add_argument('--secret', '-s', required=True, type=str, help='Ваш секрет TraderNet API')

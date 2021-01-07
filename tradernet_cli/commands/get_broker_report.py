@@ -34,12 +34,12 @@ def add_arguments(parser):
     parser.add_argument('--get_broker_report_date_start', '-gbr_date_start',
                         default=None,
                         type=date_type,
-                        help='Дата початку звіту.')
+                        help='Дата початку звіту. Формат: рррр-мм-дд.')
 
     parser.add_argument('--get_broker_report_date_end', '-gbr_date_end',
                         default=None,
                         type=date_type,
-                        help='Дата кінця звіту.')
+                        help='Дата кінця звіту. Формат: рррр-мм-дд.')
 
     parser.add_argument('--get_broker_report_time_period', '-gbr_time_period',
                         default='evening',
@@ -64,8 +64,13 @@ def get_filename_from_content_disposition_header(response):
 def get_response_data_json(response):
     js_content = response.json()
     report = js_content['report']
-    filename = f'get-broker-report_{report["date_start"]}_{report["date_end"]}.json'
-    content = json.dumps(js_content, indent=2)
+
+    client_code = report["plainAccountInfoData"]["client_code"]
+    date_start = report["date_start"].replace(":", "_")
+    date_end = report["date_end"].replace(":", "_")
+    filename = f'{client_code}_{date_start}_{date_end}_.json'
+
+    content = json.dumps(report, indent=2)
     return ResponseData(filename, content, 'w')
 
 
@@ -97,7 +102,7 @@ GET_DATA_BY_FORMAT = {
 
 
 def execute(client, arguments):
-    cmd = 'GetBrokerReport'
+    cmd = 'getBrokerReport'
 
     file_format = arguments.get_broker_report_format
     if file_format not in GET_DATA_BY_FORMAT:
