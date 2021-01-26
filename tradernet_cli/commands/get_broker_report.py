@@ -123,8 +123,8 @@ def execute(client, arguments):
         arguments.get_broker_report_date_end,
     ]
 
-    if not arguments.get_broker_report_output_directory and file_format == 'pdf':
-        logger.error('Unable to output non-text format into stdout.')
+    if not arguments.get_broker_report_output_directory and file_format in ['pdf', 'xls']:
+        logger.error(f'Unable to output non-text format {file_format} into stdout.')
         exit(1)
 
     if any(date_arguments):
