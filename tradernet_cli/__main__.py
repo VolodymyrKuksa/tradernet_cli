@@ -53,8 +53,10 @@ if __name__ == '__main__':
         command.execute(client, arguments)
     except ModuleNotFoundError:
         logger.error(f'Command "{arguments.command}" is not supported.')
+        exit(1)
     except TraderNetAPIError as e:
         logger.error(f'Call to TraderNet API resulted in an error: {e}\n{traceback.format_exc()}')
+        exit(1)
     except Exception as e:
         logger.error(f'Unexpected Exception: {e}\n{traceback.format_exc()}')
         raise

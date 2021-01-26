@@ -27,9 +27,10 @@ def add_arguments(parser):
                         help='Формат результуючого файлу.')
 
     parser.add_argument('--get_broker_report_output_directory', '-gbr_out_dir',
-                        default='.',
+                        default=None,
                         type=directory_path_type,
-                        help='Шлях до директорії в якій буде збережено результат операції.')
+                        help='Шлях до директорії в якій буде збережено результат операції. '
+                             'Якщо відсутня - вивід текстових форматів в stdout.')
 
     parser.add_argument('--get_broker_report_date_start', '-gbr_date_start',
                         default=None,
@@ -81,7 +82,11 @@ def get_response_data_xls_pdf(response):
 
 def get_response_data_xml(response):
     filename = get_filename_from_content_disposition_header(response)
-    xml_tree = xml_minidom.parseString(response.json())
+
+    js_content = response.json()
+    response = js_content['response']
+
+    xml_tree = xml_minidom.parseString(response)
     content = xml_tree.toprettyxml()
     return ResponseData(filename, content, 'w')
 
@@ -107,7 +112,7 @@ def execute(client, arguments):
     file_format = arguments.get_broker_report_format
     if file_format not in GET_DATA_BY_FORMAT:
         logger.error(f'Unsupported file format: {file_format}.')
-        return
+        exit(1)
 
     params = {
         'format': file_format,
@@ -118,12 +123,16 @@ def execute(client, arguments):
         arguments.get_broker_report_date_end,
     ]
 
+    if not arguments.get_broker_report_output_directory and file_format == 'pdf':
+        logger.error('Unable to output non-text format into stdout.')
+        exit(1)
+
     if any(date_arguments):
         if not all(date_arguments):
             missing_argument = 'get_broker_report_date_start' if not arguments.get_broker_report_date_start\
                                else 'get_broker_report_date_end'
             logger.error(f'Both date arguments must be given or none at all. Missing {missing_argument}.')
-            return
+            exit(1)
 
         params['date_start'] = arguments.get_broker_report_date_start
         params['date_end'] = arguments.get_broker_report_date_end
@@ -134,6 +143,10 @@ def execute(client, arguments):
     response = client.send_request(cmd, params=params, version=client.V2)
     data = GET_DATA_BY_FORMAT[file_format](response)
 
-    filename = os.path.join(arguments.get_broker_report_output_directory, data.filename)
-    with open(filename, data.filemode) as file:
-        file.write(data.content)
+    if arguments.get_broker_report_output_directory:
+        filename = os.path.join(arguments.get_broker_report_output_directory, data.filename)
+        with open(filename, data.filemode) as file:
+            file.write(data.content)
+    else:
+        console_logger = logging.getLogger('console')
+        console_logger.info(data.content)

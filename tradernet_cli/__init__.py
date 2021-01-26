@@ -19,11 +19,20 @@ def configure_logging():
             'generic': {
                 'format': '[%(asctime)s][%(levelname)s][%(module)s]: %(message)s'
             },
+            'plain': {
+                'format': '%(message)s'
+            },
         },
         'handlers': {
-            'console': {
+            'errstream': {
                 'class': 'logging.StreamHandler',
                 'formatter': 'generic',
+                'level': 'INFO',
+                'stream': 'ext://sys.stderr'
+            },
+            'stdout': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'plain',
                 'level': 'INFO',
                 'stream': 'ext://sys.stdout'
             },
@@ -36,9 +45,15 @@ def configure_logging():
                 'backupCount': 5,
             },
         },
-        'root': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
+        'loggers': {
+            'root': {
+                'handlers': ['errstream', 'file'],
+                'level': 'INFO',
+            },
+            'console': {
+                'handlers': ['stdout'],
+                'level': 'INFO',
+            },
         },
         'disable_existing_loggers': False,
     })
