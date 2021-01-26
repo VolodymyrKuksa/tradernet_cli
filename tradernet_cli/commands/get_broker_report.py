@@ -143,10 +143,11 @@ def execute(client, arguments):
     response = client.send_request(cmd, params=params, version=client.V2)
     data = GET_DATA_BY_FORMAT[file_format](response)
 
+    console_logger = logging.getLogger('console')
     if arguments.get_broker_report_output_directory:
         filename = os.path.join(arguments.get_broker_report_output_directory, data.filename)
         with open(filename, data.filemode) as file:
             file.write(data.content)
+        console_logger.info(f'[get_broker_report] Created file at: "{filename}"')
     else:
-        console_logger = logging.getLogger('console')
         console_logger.info(data.content)
